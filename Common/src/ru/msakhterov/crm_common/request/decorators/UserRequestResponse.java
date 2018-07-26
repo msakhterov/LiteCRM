@@ -1,8 +1,6 @@
 package ru.msakhterov.crm_common.request.decorators;
 
-import ru.msakhterov.crm_common.entity.Entity;
 import ru.msakhterov.crm_common.entity.User;
-import ru.msakhterov.crm_common.request.requests.RegAcceptRequest;
 import ru.msakhterov.crm_common.request.requests.Request;
 
 public class UserRequestResponse extends RequestResponseDecorator {
@@ -13,7 +11,7 @@ public class UserRequestResponse extends RequestResponseDecorator {
 
     @Override
     public String getLogMessage(Request request) {
-        User user = (User)request.getEntity();
+        User user = (User) request.getEntity();
         StringBuilder userDescription = new StringBuilder();
         userDescription.append(" Пользователь: ");
         userDescription.append(user.getFirstName());
@@ -21,7 +19,6 @@ public class UserRequestResponse extends RequestResponseDecorator {
         userDescription.append(user.getLastName());
         return super.getLogMessage(request) + userDescription.toString();
     }
-
 
 
 }

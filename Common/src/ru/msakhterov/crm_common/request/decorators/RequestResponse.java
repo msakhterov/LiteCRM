@@ -1,6 +1,5 @@
 package ru.msakhterov.crm_common.request.decorators;
 
-import ru.msakhterov.crm_common.entity.Entity;
 import ru.msakhterov.crm_common.request.RequestSubjects;
 import ru.msakhterov.crm_common.request.requests.Request;
 
