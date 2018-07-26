@@ -7,8 +7,9 @@ import ru.msakhterov.crm_common.network.SocketThread;
 import ru.msakhterov.crm_common.network.SocketThreadListener;
 import ru.msakhterov.crm_common.request.RequestFabric;
 import ru.msakhterov.crm_common.request.RequestSubjects;
-import ru.msakhterov.crm_common.request.decorators.AuthRequestResponse;
-import ru.msakhterov.crm_common.request.decorators.RegRequestResponse;
+import ru.msakhterov.crm_common.request.decorators.RequestResponse;
+import ru.msakhterov.crm_common.request.decorators.Response;
+import ru.msakhterov.crm_common.request.decorators.UserRequestResponse;
 import ru.msakhterov.crm_common.request.requests.Request;
 
 import javax.swing.*;
@@ -44,35 +45,6 @@ public class ClientController implements ClientListener, SocketThreadListener {
         socketThread.close();
     }
 
-//    @Override
-//    public void onUpload() {
-//        File selectedFile = client.getFilePath(null);
-//        if (selectedFile != null) {
-//            uploadFile(selectedFile);
-//        }
-//    }
-//
-//    @Override
-//    public void onUpload(String filePath) {
-//        File selectedFile = new File(filePath);
-//        uploadFile(selectedFile);
-//    }
-//
-//    @Override
-//    public void onDownload(String fileName) {
-//        socketThread.sendRequest(Requests.getDownloadRequest(fileName));
-//    }
-//
-//    @Override
-//    public void onDelete(String fileName) {
-//        socketThread.sendRequest(Requests.getDeleteRequest(fileName));
-//    }
-//
-//    @Override
-//    public void onRename(String oldFileName, String newFileName) {
-//        socketThread.sendRequest(Requests.getRenameRequest(oldFileName, newFileName));
-//    }
-
     private void connect() {
         Socket socket = null;
         try {
@@ -84,30 +56,28 @@ public class ClientController implements ClientListener, SocketThreadListener {
     }
 
     private void handleRequest(Request request) {
+        Response requestResponse = new RequestResponse();
         switch (request.getRequestSubject()) {
             case RequestSubjects.AUTH_ACCEPT:
-                AuthRequestResponse authResponse = new AuthRequestResponse(request);
-                client.setViewTitle(authResponse.getUserData());
-                client.logAppend("Успешная авторизация");
+                requestResponse = new UserRequestResponse(requestResponse);
                 break;
             case RequestSubjects.AUTH_DENIED:
-                client.logAppend("Ошибка авторизации");
+                requestResponse = new UserRequestResponse(requestResponse);
                 break;
             case RequestSubjects.REG_ACCEPT:
-                RegRequestResponse regResponse = new RegRequestResponse(request);
-                client.setViewTitle(regResponse.getUserData());
-                client.logAppend("Успешная регистрация");
+                requestResponse = new UserRequestResponse(requestResponse);
                 break;
             case RequestSubjects.REG_DENIED:
-                client.logAppend("Ошибка регистрации");
+                requestResponse = new UserRequestResponse(requestResponse);
                 break;
             case RequestSubjects.REQUEST_FORMAT_ERROR:
-                client.logAppend("Ошибка запроса");
+                requestResponse = new UserRequestResponse(requestResponse);
                 socketThread.close();
                 break;
             default:
                 throw new RuntimeException("Unknown message format");
         }
+        client.logAppend(requestResponse.getLogMessage(request));
     }
 
 

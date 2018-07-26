@@ -3,7 +3,7 @@ package ru.msakhterov.crm_common.entity;
 import java.util.Date;
 import java.util.UUID;
 
-public class User extends Entity {
+public class User implements Entity {
     private final UUID uuid;
     private final String firstName;
     private final String lastName;

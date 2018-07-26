@@ -17,6 +17,7 @@ public class RegRequest implements Request {
         return requestSubject;
     }
 
+    @Override
     public Entity getEntity() {
         return entity;
     }
