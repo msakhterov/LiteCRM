@@ -34,7 +34,9 @@ public class SocketThread extends Thread {
                 } catch (ClassNotFoundException e) {
                     listener.onSocketThreadException(this, e);
                 }
-                if (request != null) listener.onReceiveRequest(this, socket, request);
+                if (request != null) {
+                    listener.onReceiveRequest(this, socket, request);
+                }
             }
         } catch (IOException e) {
             listener.onSocketThreadException(this, e);

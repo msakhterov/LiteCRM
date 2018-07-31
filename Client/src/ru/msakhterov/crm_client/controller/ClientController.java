@@ -1,5 +1,7 @@
 package ru.msakhterov.crm_client.controller;
 
+import ru.msakhterov.crm_client.events.EventListener;
+import ru.msakhterov.crm_client.events.EventType;
 import ru.msakhterov.crm_client.view.ClientView;
 import ru.msakhterov.crm_client.view.ViewStatement;
 import ru.msakhterov.crm_common.entity.User;
@@ -16,7 +18,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientController implements ClientListener, SocketThreadListener {
+public class ClientController implements EventListener, SocketThreadListener {
 
     private ClientView client;
     private SocketThread socketThread;
@@ -26,23 +28,25 @@ public class ClientController implements ClientListener, SocketThreadListener {
     public ClientController(ClientView client) {
         this.client = client;
         requestFabric = RequestFabric.getRequestFabric();
+
     }
 
-    @Override
-    public void onLogin() {
-        selector = 1;
-        connect();
-    }
-
-    @Override
-    public void onRegistration() {
-        selector = 2;
-        connect();
-    }
-
-    @Override
-    public void onDisconnect() {
-        socketThread.close();
+    public void execute (EventType event){
+        switch (event){
+            case LOGIN:
+                selector = 1;
+                connect();
+                break;
+            case REGISTRATION:
+                selector = 2;
+                connect();
+                break;
+            case DISCONNECT:
+                socketThread.close();
+                break;
+            default:
+                throw new RuntimeException("Unknown event type format");
+        }
     }
 
     private void connect() {

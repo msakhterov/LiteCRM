@@ -1,14 +1,15 @@
 package ru.msakhterov.crm_client.view;
 
 import ru.msakhterov.crm_client.controller.ClientController;
-import ru.msakhterov.crm_client.controller.ClientListener;
+import ru.msakhterov.crm_client.events.EventManager;
+import ru.msakhterov.crm_client.events.EventType;
+import ru.msakhterov.crm_client.events.event_logger.FileLogger;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -54,10 +55,12 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Object[] columnsHeader = new String[]{"Наименование", "Размер", "Дата изменения"};
     private JScrollPane tableScrollPane;
-    private ClientListener controller;
+
     private boolean isSelected = false;
     private int selectedRow;
     private String defaultPath;
+
+    private EventManager eventManager;
 
     public ClientGUI() {
         Thread.setDefaultUncaughtExceptionHandler(this);
@@ -119,9 +122,12 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
         btnRename.addActionListener(this);
         selModel.addListSelectionListener(this);
 
-        controller = new ClientController(this);
         setResizable(false);
         setVisible(true);
+
+        eventManager = new EventManager();
+        eventManager.addListener(new ClientController(this));
+        eventManager.addListener(new FileLogger());
     }
 
     @Override
@@ -134,11 +140,11 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
         } else if (src == signUpBtn) {
             setView(ViewStatement.SIGN_UP);
         } else if (src == btnLogin) {
-            controller.onLogin();
+            eventManager.notifyListeners(EventType.LOGIN);
         } else if (src == btnReg) {
-            controller.onRegistration();
+            eventManager.notifyListeners(EventType.REGISTRATION);
         } else if (src == btnDisconnect) {
-            controller.onDisconnect();
+            eventManager.notifyListeners(EventType.DISCONNECT);
             clearTable();
         } else {
             throw new RuntimeException("Unknown source: " + src);
