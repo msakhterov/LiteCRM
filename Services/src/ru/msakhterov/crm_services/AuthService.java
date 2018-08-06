@@ -21,23 +21,17 @@ public class AuthService {
         this.client = client;
     }
 
-    private boolean executeRequest() {
+    public boolean executeRequest() {
         User authUser = (User) request.getEntity();
-        String login = authUser.getLogin();
-        String password = authUser.getPassword();
-        String dbPassword = dataBaseManager.checkAuth(login);
-        if (password.equals(dbPassword)) {
-            User user = dataBaseManager.getUser(login);
-            if (user != null) {
-                Request request = requestFabric.makeRequest(RequestSubjects.AUTH_ACCEPT, user);
-                client.sendRequest(request);
-                return true;
-            } else {
-                Request request = requestFabric.makeRequest(RequestSubjects.AUTH_DENIED, null);
-                client.sendRequest(request);
-                return false;
-            }
+        User user = dataBaseManager.getUser(authUser.getLogin());
+        if (authUser.getPassword().equals(user.getPassword())) {
+            Request request = requestFabric.makeRequest(RequestSubjects.AUTH_ACCEPT, user);
+            client.sendRequest(request);
+            return true;
+        } else {
+            Request request = requestFabric.makeRequest(RequestSubjects.AUTH_DENIED, null);
+            client.sendRequest(request);
+            return false;
         }
-        return false;
     }
 }

@@ -45,25 +45,6 @@ public class DataBaseManager {
         return result;
     }
 
-
-    public synchronized String checkAuth(String login){
-        System.out.println("Авторизация пользователя: " + login);
-        String request = "SELECT " + UsersTable.Colons.PASSWORD +
-                " FROM " + UsersTable.NAME +
-                " WHERE " + UsersTable.Colons.LOGIN +
-                " = " + "'" + login + "';";
-        try (Statement statement = connection.createStatement()) {
-            ResultSet set = statement.executeQuery(request);
-            if (set.next()) {
-                return set.getString(UsersTable.Colons.PASSWORD);
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public synchronized User getUser(String login){
         System.out.println("Получение данных пользователя: " + login);
         return userMapper.find(login);
