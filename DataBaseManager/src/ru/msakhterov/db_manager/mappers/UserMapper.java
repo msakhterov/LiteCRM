@@ -50,14 +50,14 @@ public class UserMapper {
                 UsersTable.Colons.LOGIN + ", " +
                 UsersTable.Colons.PASSWORD + ") " +
                 " VALUES ('" +
-                user.getFirstName() + "', " +
+                user.getFirstName() + "', '" +
                 user.getLastName() + "', " +
-                user.getBirthday() + "', " +
-                user.getPhoneNumber() + "', " +
+                user.getBirthday() + ", '" +
+                user.getPhoneNumber() + "', '" +
                 user.getEmail() + "', " +
-                user.getOrganization() + "', " +
-                user.getAccessLevel() + "', " +
-                user.getLogin() + "', " +
+                user.getOrganization() + ", " +
+                user.getAccessLevel() + ", '" +
+                user.getLogin() + "', '" +
                 user.getPassword() + "');";
         try (Statement statement = connection.createStatement()) {
             result = statement.executeUpdate(request);
@@ -74,7 +74,7 @@ public class UserMapper {
                 " SET " +
                 UsersTable.Colons.FIRST_NAME + " = " +  user.getFirstName() + ", " +
                 UsersTable.Colons.LAST_NAME + " = " + user.getLastName() + ", " +
-                UsersTable.Colons.BIRTHDAY + " = " + user.getBirthday() + ", " +
+                UsersTable.Colons.BIRTHDAY + " = " + user.getBirthday().getTime() + ", " +
                 UsersTable.Colons.PHONE_NUMBER + " = " + user.getPhoneNumber() + ", " +
                 UsersTable.Colons.EMAIL + " = " + user.getEmail() + ", " +
                 UsersTable.Colons.ORGANIZATION_ID + " = " + user.getOrganization() + ", " +

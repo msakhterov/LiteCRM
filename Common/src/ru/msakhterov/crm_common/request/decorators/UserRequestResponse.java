@@ -13,10 +13,12 @@ public class UserRequestResponse extends RequestResponseDecorator {
     public String getLogMessage(Request request) {
         User user = (User) request.getEntity();
         StringBuilder userDescription = new StringBuilder();
-        userDescription.append(" Пользователь: ");
-        userDescription.append(user.getFirstName());
-        userDescription.append(" ");
-        userDescription.append(user.getLastName());
+        if(user != null){
+            userDescription.append(" Пользователь: ");
+            userDescription.append(user.getFirstName());
+            userDescription.append(" ");
+            userDescription.append(user.getLastName());
+        }
         return super.getLogMessage(request) + userDescription.toString();
     }
 

@@ -4,7 +4,6 @@ import ru.msakhterov.crm_common.entity.Entity;
 import ru.msakhterov.crm_common.request.requests.*;
 
 public class RequestFabric {
-//    private static RequestFabric requestFabric = new RequestFabric();
 
     public static RequestFabric getRequestFabric() {
         return new RequestFabric();
@@ -25,6 +24,10 @@ public class RequestFabric {
                 return new AuthAcceptRequestMaker();
             case RequestSubjects.REG_ACCEPT:
                 return new RegAcceptRequestMaker();
+            case RequestSubjects.AUTH_DENIED:
+                return new AuthDeniedRequestMaker();
+            case RequestSubjects.REG_DENIED:
+                return new RegDeniedRequestMaker();
             default:
                 throw new IllegalArgumentException("RequestType not supported.");
         }

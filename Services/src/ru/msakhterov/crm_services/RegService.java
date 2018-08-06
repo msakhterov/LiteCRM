@@ -23,7 +23,7 @@ public class RegService {
     }
 
     public boolean executeRequest() {
-        User regUser = (User)request.getEntity();
+        User regUser = (User) request.getEntity();
         int result = dataBaseManager.makeReg(regUser);
         if (result == 1) {
             User user = dataBaseManager.getUser(regUser.getLogin());
@@ -31,12 +31,13 @@ public class RegService {
                 Request request = requestFabric.makeRequest(RequestSubjects.REG_ACCEPT, user);
                 client.sendRequest(request);
                 return true;
-            } else {
-                Request request = requestFabric.makeRequest(RequestSubjects.REG_DENIED, null);
-                client.sendRequest(request);
-                return false;
             }
+        } else {
+            Request request = requestFabric.makeRequest(RequestSubjects.REG_DENIED, null);
+            client.sendRequest(request);
+            return false;
         }
         return false;
     }
+
 }

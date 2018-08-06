@@ -39,7 +39,7 @@ public class DataBaseManager {
         System.out.println("Регистрация пользователя: " + user.getLogin());
         int result = 0;
         User checkUser = userMapper.find(user.getLogin());
-        if (checkUser.getId() != null){
+        if (checkUser.getId() == null){
             result = userMapper.insert(user);
         }
         return result;
