@@ -2,6 +2,7 @@ package ru.msakhterov.db_manager;
 
 import ru.msakhterov.crm_common.entity.User;
 import ru.msakhterov.db_manager.DataBaseSchema.UsersTable;
+import ru.msakhterov.db_manager.mappers.UserMapper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,19 +12,22 @@ import java.sql.Statement;
 public class DataBaseManager {
     private static DataBaseManager dataBaseManager;
     private static Connection connection;
+    private static UserMapper userMapper;
+
 
     private DataBaseManager() {
         connection = DataBaseClient.getDataBaseConnection();
+        userMapper = new UserMapper(connection);
     }
 
     public synchronized static DataBaseManager getDataBaseManager() {
-        if (dataBaseManager == null) {
+        if (dataBaseManager == null){
             dataBaseManager = new DataBaseManager();
         }
         return dataBaseManager;
     }
 
-    public synchronized void disconnect() {
+    public synchronized void disconnect(){
         try {
             connection.close();
         } catch (SQLException e) {
@@ -31,25 +35,18 @@ public class DataBaseManager {
         }
     }
 
-    public synchronized int makeReg(String login, String password, String email) {
-
-        System.out.println("Регистрация пользователя: " + login);
+    public synchronized int makeReg(User user){
+        System.out.println("Регистрация пользователя: " + user.getLogin());
         int result = 0;
-        String request = "INSERT INTO " + UsersTable.NAME +
-                " (" + UsersTable.Colons.LOGIN + ", " + UsersTable.Colons.PASSWORD + ", " + UsersTable.Colons.EMAIL + ") " +
-                " VALUES ('" + login + "', " + password + ", '" + email + "');";
-        System.out.println(request);
-        try (Statement statement = connection.createStatement()) {
-            result = statement.executeUpdate(request);
-            System.out.println("Результат внесения данных " + result);
-        } catch (SQLException e) {
-            System.out.println("Исключение при регистрации" + e);
+        User checkUser = userMapper.find(user.getLogin());
+        if (checkUser.getId() != null){
+            result = userMapper.insert(user);
         }
         return result;
     }
 
 
-    public synchronized String checkAuth(String login) {
+    public synchronized String checkAuth(String login){
         System.out.println("Авторизация пользователя: " + login);
         String request = "SELECT " + UsersTable.Colons.PASSWORD +
                 " FROM " + UsersTable.NAME +
@@ -67,20 +64,8 @@ public class DataBaseManager {
         }
     }
 
-    public synchronized User getUser(String login) {
-        User user = null;
+    public synchronized User getUser(String login){
         System.out.println("Получение данных пользователя: " + login);
-        String request = "SELECT * " +
-                " FROM " + UsersTable.NAME +
-                " WHERE " + UsersTable.Colons.LOGIN +
-                " = " + "'" + login + "';";
-        try (Statement statement = connection.createStatement()) {
-            ResultSet set = statement.executeQuery(request);
-            ResultSetWrapper wrapper = new ResultSetWrapper(set);
-            user = wrapper.getUser();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return user;
+        return userMapper.find(login);
     }
 }

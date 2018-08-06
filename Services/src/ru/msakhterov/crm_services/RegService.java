@@ -23,13 +23,10 @@ public class RegService {
     }
 
     public boolean executeRequest() {
-        User authUser = (User) request.getEntity();
-        String login = authUser.getLogin();
-        String password = authUser.getPassword();
-        String email = authUser.getEmail();
-        int result = dataBaseManager.makeReg(login, password, email);
+        User regUser = (User)request.getEntity();
+        int result = dataBaseManager.makeReg(regUser);
         if (result == 1) {
-            User user = dataBaseManager.getUser(login);
+            User user = dataBaseManager.getUser(regUser.getLogin());
             if (user != null) {
                 Request request = requestFabric.makeRequest(RequestSubjects.REG_ACCEPT, user);
                 client.sendRequest(request);

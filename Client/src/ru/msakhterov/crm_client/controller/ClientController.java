@@ -108,7 +108,7 @@ public class ClientController implements EventListener, SocketThreadListener {
             Request authRequest = requestFabric.makeRequest(RequestSubjects.AUTH_REQUEST, authUser);
             thread.sendRequest(authRequest);
         } else {
-            User regUser = new User.Builder(login, password).setUuid().setEmail(email).build();
+            User regUser = new User.Builder(login, password).setEmail(email).build();
             Request regRequest = requestFabric.makeRequest(RequestSubjects.REG_REQUEST, regUser);
             thread.sendRequest(regRequest);
         }

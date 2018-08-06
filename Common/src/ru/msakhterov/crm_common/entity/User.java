@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class User implements Entity {
-    private final UUID uuid;
+    private final Integer id;
     private final String firstName;
     private final String lastName;
     private final Date birthday;
@@ -16,7 +16,7 @@ public class User implements Entity {
     private final String password;
 
     public User(Builder builder) {
-        this.uuid = builder.uuid;
+        this.id = builder.id;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.birthday = builder.birthday;
@@ -28,8 +28,8 @@ public class User implements Entity {
         this.password = builder.password;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Integer getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -70,7 +70,7 @@ public class User implements Entity {
 
     public static class Builder {
 
-        private UUID uuid;
+        private Integer id;
         private String firstName;
         private String lastName;
         private Date birthday;
@@ -82,7 +82,6 @@ public class User implements Entity {
         private String password;
 
         public Builder() {
-
         }
 
         public Builder(String login, String password) {
@@ -90,13 +89,8 @@ public class User implements Entity {
             this.password = password;
         }
 
-        public Builder setUuid(UUID uuid) {
-            this.uuid = uuid;
-            return this;
-        }
-
-        public Builder setUuid() {
-            this.uuid = UUID.randomUUID();
+        public Builder setId(Integer id) {
+            this.id = id;
             return this;
         }
 

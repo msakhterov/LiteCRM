@@ -25,5 +25,19 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+        <plugin>
+            <groupId>com.zenjava</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>8.8.3</version>
+            <configuration>
+                <mainClass>ru.msakhterov.crm_client.ClientMain</mainClass>
+            </configuration>
+        </plugin>
+        </plugins>
+    </build>
+
+
 
 </project>
