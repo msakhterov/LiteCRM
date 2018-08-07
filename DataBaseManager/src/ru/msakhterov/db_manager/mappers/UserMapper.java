@@ -90,6 +90,9 @@ public class UserMapper {
         } catch (SQLException e) {
             System.out.println("Исключение при изменении данных " + user.getLogin() + ": " + e);
         }
+        if (result == 1){
+            userMap.addUser(user);
+        }
         return result;
     }
 
@@ -104,6 +107,9 @@ public class UserMapper {
             System.out.println("Результат удаления данных " + user.getLogin() + ": " + result);
         } catch (SQLException e) {
             System.out.println("Исключение при удалении данных " + user.getLogin() + ": " + e);
+        }
+        if (result == 1){
+            userMap.removeUser(user.getLogin());
         }
         return result;
     }

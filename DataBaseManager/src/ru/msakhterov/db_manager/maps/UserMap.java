@@ -17,4 +17,8 @@ public class UserMap {
         return users.get(login);
     }
 
+    public void removeUser(String login){
+        users.remove(login);
+    }
+
 }
