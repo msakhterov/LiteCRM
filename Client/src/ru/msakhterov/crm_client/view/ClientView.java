@@ -4,10 +4,6 @@ import java.io.File;
 
 public interface ClientView {
 
-    String getIP();
-
-    int getPort();
-
     String getLogin();
 
     String getPassword();

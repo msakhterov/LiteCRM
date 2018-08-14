@@ -1,9 +1,11 @@
-package ru.msakhterov.crm_client.view;
+package ru.msakhterov.crm_client.view.swing;
 
 import ru.msakhterov.crm_client.controller.ClientController;
 import ru.msakhterov.crm_client.events.EventManager;
 import ru.msakhterov.crm_client.events.EventType;
 import ru.msakhterov.crm_client.events.event_logger.FileLogger;
+import ru.msakhterov.crm_client.view.ClientView;
+import ru.msakhterov.crm_client.view.ViewStatement;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -24,47 +26,41 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
     private static final int WIDTH = 500;
     private static final int HEIGHT = 400;
 
-    private static final int START_WIDTH = 300;
-    private static final int START_HEIGHT = 400;
+    private static final int START_WIDTH = 200;
+    private static final int START_HEIGHT = 200;
 
-    private final Box startPanel = new Box(BoxLayout.Y_AXIS);
-    private final JButton signInBtn = new JButton("Войти");
-    private final JButton signUpBtn = new JButton("Зарегистрироваться");
-
-
-
-
-
-    private final JPanel rightPanel = new JPanel(new GridLayout(8, 1));
-    private final Box leftPanel = new Box(BoxLayout.Y_AXIS);
-
+    private final JTextField tfSignInLogin = new JTextField("test");
+    private final JPasswordField tfSignInPassword = new JPasswordField("123");
+    private final JButton btnLogin = new JButton("Войти");
+    private final JButton btnSignUp = new JButton("Панель регистрации");
     private final JPanel loginPanel = new JPanel(new GridLayout(2, 2));
+    private final JPanel loginButtonPanel = new JPanel(new GridLayout(2, 1));
+    private final Box loginBox = new Box(BoxLayout.Y_AXIS);
+
+    private final JTextField tfSignUpLogin = new JTextField("test");
+    private final JPasswordField tfSignUpPassword = new JPasswordField("123");
+    private final JTextField tfSignUpEmail = new JTextField("test1@test.ru");
+    private final JButton btnReg = new JButton("Зарегистрироваться");
+    private final JButton btnSignIn = new JButton("Панель входа");
     private final JPanel registrationPanel = new JPanel(new GridLayout(3, 2));
-    private final DefaultTableModel tableModel = new DefaultTableModel();
+    private final JPanel registrationButtonPanel = new JPanel(new GridLayout(2, 1));
+    private final Box registrationBox = new Box(BoxLayout.Y_AXIS);
 
-
-
-    private final JTextArea log = new JTextArea();
     private final JTable table = new JTable();
-    private final JTextField tfIPAddress = new JTextField("localhost");
-    private final JTextField tfPort = new JTextField("8190");
-    private final JTextField tfEmail = new JTextField("test1@test.ru");
-    private final JCheckBox cbAlwaysOnTop = new JCheckBox("Always on top");
-    private final JTextField tfLogin = new JTextField("test");
-    private final JPasswordField tfPassword = new JPasswordField("123");
-    private final JButton btnLogin = new JButton("Login");
-    private final JButton btnReg = new JButton("Registration");
-    private final JButton btnDisconnect = new JButton("Disconnect");
-    private final JButton btnUpload = new JButton("Upload");
-    private final JButton btnDownload = new JButton("Download");
-    private final JButton btnDelete = new JButton("Delete");
-    private final JButton btnRename = new JButton("Rename");
-    private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private final DefaultTableModel tableModel = new DefaultTableModel();
     private Object[] columnsHeader = new String[]{"Наименование", "Размер", "Дата изменения"};
     private JScrollPane tableScrollPane;
+    private final JTextArea log = new JTextArea();
+    private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private final Box leftPanel = new Box(BoxLayout.Y_AXIS);
+
+    private final JCheckBox cbAlwaysOnTop = new JCheckBox("Always on top");
+    private final JButton btnDisconnect = new JButton("Disconnect");
+    private final JPanel topPanel = new JPanel(new GridLayout(1, 2));
 
     private boolean isSelected = false;
     private int selectedRow;
+    private ViewStatement currentStatement;
     private String defaultPath;
 
     private EventManager eventManager;
@@ -73,25 +69,32 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
         Thread.setDefaultUncaughtExceptionHandler(this);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        setSize(WIDTH, HEIGHT);
+        setSize(START_WIDTH, START_HEIGHT);
         setLocationRelativeTo(null);
         setTitle(WINDOW_TITLE);
 
-        startPanel.add(signInBtn);
-        startPanel.add(signUpBtn);
+        loginPanel.add(new Label("Login:"));
+        loginPanel.add(tfSignInLogin);
+        loginPanel.add(new Label("Password:"));
+        loginPanel.add(tfSignInPassword);
+        loginButtonPanel.add(btnLogin);
+        loginButtonPanel.add(btnSignUp);
+        loginBox.add(loginPanel);
+        loginBox.add(loginButtonPanel);
 
-        loginPanel.add(tfLogin, tfPassword);
+        registrationPanel.add(new Label("Login:"));
+        registrationPanel.add(tfSignUpLogin);
+        registrationPanel.add(new Label("Password:"));
+        registrationPanel.add(tfSignUpPassword);
+        registrationPanel.add(new Label("Email:"));
+        registrationPanel.add(tfSignUpEmail);
+        registrationButtonPanel.add(btnReg);
+        registrationButtonPanel.add(btnSignIn);
+        registrationBox.add(registrationPanel);
+        registrationBox.add(registrationButtonPanel);
 
-        rightPanel.add(cbAlwaysOnTop);
-        rightPanel.add(tfIPAddress);
-        rightPanel.add(tfPort);
-        rightPanel.add(tfLogin);
-        rightPanel.add(tfPassword);
-        rightPanel.add(tfEmail);
-        rightPanel.add(btnLogin);
-        rightPanel.add(btnReg);
-
-        add(rightPanel, BorderLayout.EAST);
+        topPanel.add(cbAlwaysOnTop);
+        topPanel.add(btnDisconnect);
 
         tableModel.setColumnIdentifiers(columnsHeader);
         table.setModel(tableModel);
@@ -108,27 +111,20 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
 
         tableScrollPane = new JScrollPane(table);
 
-        add(leftPanel);
+        leftPanel.add(tableScrollPane);
+        leftPanel.add(new JScrollPane(log));
 
         //Подключение слушателей кнопок
-        signInBtn.addActionListener(this);
-        signUpBtn.addActionListener(this);
 
         cbAlwaysOnTop.addActionListener(this);
-        tfIPAddress.addActionListener(this);
-        tfLogin.addActionListener(this);
-        tfPassword.addActionListener(this);
-        tfPort.addActionListener(this);
-        tfEmail.addActionListener(this);
         btnLogin.addActionListener(this);
         btnReg.addActionListener(this);
+        btnSignUp.addActionListener(this);
+        btnSignIn.addActionListener(this);
         btnDisconnect.addActionListener(this);
-        btnUpload.addActionListener(this);
-        btnDownload.addActionListener(this);
-        btnDelete.addActionListener(this);
-        btnRename.addActionListener(this);
         selModel.addListSelectionListener(this);
 
+        setView(ViewStatement.SIGN_IN);
         setResizable(false);
         setVisible(true);
 
@@ -143,9 +139,9 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
         Object src = e.getSource();
         if (src == cbAlwaysOnTop) {
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
-        } else if (src == signInBtn) {
+        } else if (src == btnSignIn) {
             setView(ViewStatement.SIGN_IN);
-        } else if (src == signUpBtn) {
+        } else if (src == btnSignUp) {
             setView(ViewStatement.SIGN_UP);
         } else if (src == btnLogin) {
             eventManager.notifyListeners(EventType.LOGIN);
@@ -176,30 +172,23 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
         System.exit(1);
     }
 
-
-    @Override
-    public String getIP() {
-        return tfIPAddress.getText();
-    }
-
-    @Override
-    public int getPort() {
-        return Integer.parseInt(tfPort.getText());
-    }
-
     @Override
     public String getLogin() {
-        return tfLogin.getText();
+        if(currentStatement == ViewStatement.SIGN_IN)
+        return tfSignInLogin.getText();
+        else return tfSignUpLogin.getText();
     }
 
     @Override
     public String getPassword() {
-        return new String(tfPassword.getPassword());
+        if(currentStatement == ViewStatement.SIGN_IN)
+        return new String(tfSignInPassword.getPassword());
+        else return new String(tfSignUpPassword.getPassword());
     }
 
     @Override
     public String getEmail() {
-        return tfEmail.getText();
+        return tfSignUpEmail.getText();
     }
 
     @Override
@@ -235,49 +224,34 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
     public void setView(ViewStatement statement) {
         switch (statement) {
             case SIGN_IN:
-                add(loginPanel);
-                add(btnLogin);
+                currentStatement = ViewStatement.SIGN_IN;
+                remove(registrationBox);
+                add(loginBox, BorderLayout.CENTER);
+                revalidate();
+                repaint();
                 break;
             case SIGN_UP:
-                add(registrationPanel);
-                add(btnReg);
+                currentStatement = ViewStatement.SIGN_UP;
+                remove(loginBox);
+                add(registrationBox, BorderLayout.CENTER);
+                revalidate();
+                repaint();
                 break;
-
             case CONNECTED:
-                leftPanel.add(tableScrollPane);
-                leftPanel.add(new JScrollPane(log));
-                rightPanel.remove(tfIPAddress);
-                rightPanel.remove(tfPort);
-                rightPanel.remove(tfLogin);
-                rightPanel.remove(tfPassword);
-                rightPanel.remove(tfEmail);
-                rightPanel.remove(btnLogin);
-                rightPanel.remove(btnReg);
-                rightPanel.add(btnDisconnect);
-                rightPanel.add(btnUpload);
-                rightPanel.add(btnDownload);
-                rightPanel.add(btnDelete);
-                rightPanel.add(btnRename);
-                rightPanel.revalidate();
+                setSize(WIDTH, HEIGHT);
+                remove(loginBox);
+                remove(registrationBox);
+                add(topPanel, BorderLayout.NORTH);
+                add(leftPanel, BorderLayout.SOUTH);
+                revalidate();
                 repaint();
                 break;
             case DISCONNECTED:
-                leftPanel.remove(tableScrollPane);
-                leftPanel.remove(new JScrollPane(log));
-                rightPanel.remove(btnDisconnect);
-                rightPanel.remove(btnUpload);
-                rightPanel.remove(btnDownload);
-                rightPanel.remove(btnDelete);
-                rightPanel.remove(btnRename);
-                rightPanel.add(tfIPAddress);
-                rightPanel.add(tfPort);
-                rightPanel.add(tfLogin);
-                rightPanel.add(tfPassword);
-                rightPanel.add(tfEmail);
-                rightPanel.add(btnLogin);
-                rightPanel.add(btnReg);
-                rightPanel.revalidate();
-                add(rightPanel, BorderLayout.EAST);
+                remove(leftPanel);
+                remove(topPanel);
+                setSize(START_WIDTH, START_HEIGHT);
+                add(loginBox, BorderLayout.CENTER);
+                revalidate();
                 repaint();
             default:
                 break;

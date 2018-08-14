@@ -1,6 +1,6 @@
 package ru.msakhterov.crm_client;
 
-import ru.msakhterov.crm_client.view.ClientGUI;
+import ru.msakhterov.crm_client.view.swing.ClientGUI;
 
 import javax.swing.*;
 

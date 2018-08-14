@@ -15,7 +15,7 @@ public class EventManager {
         listeners.add(listener);
     }
 
-    public void removeListeber(EventListener listener) {
+    public void removeListener(EventListener listener) {
         listeners.remove(listener);
     }
 

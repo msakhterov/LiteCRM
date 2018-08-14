@@ -4,6 +4,7 @@ import ru.msakhterov.crm_client.events.EventListener;
 import ru.msakhterov.crm_client.events.EventType;
 import ru.msakhterov.crm_client.view.ClientView;
 import ru.msakhterov.crm_client.view.ViewStatement;
+import ru.msakhterov.crm_common.constants.NetworkConstants;
 import ru.msakhterov.crm_common.entity.User;
 import ru.msakhterov.crm_common.network.SocketThread;
 import ru.msakhterov.crm_common.network.SocketThreadListener;
@@ -52,7 +53,7 @@ public class ClientController implements EventListener, SocketThreadListener {
     private void connect() {
         Socket socket = null;
         try {
-            socket = new Socket(client.getIP(), client.getPort());
+            socket = new Socket(NetworkConstants.CONNECT_IP, NetworkConstants.CONNECT_PORT);
         } catch (IOException e) {
             client.logAppend("Exception: " + e.getMessage());
         }
@@ -84,7 +85,6 @@ public class ClientController implements EventListener, SocketThreadListener {
         client.logAppend(requestResponse.getLogMessage(request));
     }
 
-
     @Override
     public void onStartSocketThread(SocketThread thread, Socket socket) {
         client.logAppend("Поток сокета стартовал");
@@ -100,15 +100,12 @@ public class ClientController implements EventListener, SocketThreadListener {
     @Override
     public void onSocketIsReady(SocketThread thread, Socket socket) {
         client.logAppend("Соединение установлено");
-        String login = client.getLogin();
-        String password = client.getPassword();
-        String email = client.getEmail();
         if (selector == 1) {
-            User authUser = new User.Builder(login, password).build();
+            User authUser = new User.Builder(client.getLogin(), client.getPassword()).build();
             Request authRequest = requestFabric.makeRequest(RequestSubjects.AUTH_REQUEST, authUser);
             thread.sendRequest(authRequest);
         } else {
-            User regUser = new User.Builder(login, password).setEmail(email).build();
+            User regUser = new User.Builder(client.getLogin(), client.getPassword()).setEmail(client.getEmail()).build();
             Request regRequest = requestFabric.makeRequest(RequestSubjects.REG_REQUEST, regUser);
             thread.sendRequest(regRequest);
         }
