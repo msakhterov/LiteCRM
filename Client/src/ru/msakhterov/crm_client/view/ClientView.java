@@ -10,15 +10,9 @@ public interface ClientView {
 
     String getEmail();
 
-    File getFilePath(String fileName);
-
     void logAppend(String msg);
 
     void setView(ViewStatement statement);
-
-    void setFilesList(String[][] filesList);
-
-    void setFilesList();
 
     void setViewTitle(String title);
 }

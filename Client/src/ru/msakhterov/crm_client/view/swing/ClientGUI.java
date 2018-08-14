@@ -192,28 +192,6 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
     }
 
     @Override
-    public File getFilePath(String fileName) {
-        JFileChooser fileChooser = new JFileChooser(defaultPath);
-        File selectedFilePath = null;
-        if (fileName == null) {
-            fileChooser.setDialogTitle("Выбор файла");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                selectedFilePath = fileChooser.getSelectedFile();
-                defaultPath = selectedFilePath.getParent();
-            }
-        } else {
-            fileChooser.setDialogTitle("Сохранение файла");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setSelectedFile(new File(fileName));
-            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                selectedFilePath = fileChooser.getSelectedFile();
-            }
-        }
-        return selectedFilePath;
-    }
-
-    @Override
     public void logAppend(String msg) {
         msg = dateFormat.format(System.currentTimeMillis()) + ": " + msg;
         log.append(msg + "\n");
@@ -265,31 +243,11 @@ public class ClientGUI extends JFrame implements Thread.UncaughtExceptionHandler
     }
 
     @Override
-    public void setFilesList(String[][] filesList) {
-        clearTable();
-        if (filesList != null) {
-            for (int j = 0; j < filesList.length; j++) {
-                Vector<String> row = new Vector<>();
-                for (int i = 0; i < filesList[j].length; i++) {
-                    row.add(filesList[j][i]);
-                }
-                tableModel.insertRow(j, row);
-            }
-        }
-    }
-
-    @Override
-    public void setFilesList() {
-        clearTable();
-    }
-
-    @Override
     public void valueChanged(ListSelectionEvent e) {
         if ((selectedRow = table.getSelectedRow()) > -1) {
             isSelected = true;
         }
     }
-
 
     private void setColumnsWidth() {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

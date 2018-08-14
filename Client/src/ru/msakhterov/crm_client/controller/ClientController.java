@@ -29,7 +29,6 @@ public class ClientController implements EventListener, SocketThreadListener {
     public ClientController(ClientView client) {
         this.client = client;
         requestFabric = RequestFabric.getRequestFabric();
-
     }
 
     public void execute (EventType event){
