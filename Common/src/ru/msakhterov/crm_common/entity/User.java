@@ -1,13 +1,10 @@
 package ru.msakhterov.crm_common.entity;
 
-import java.util.Date;
-import java.util.UUID;
-
 public class User implements Entity {
     private final Integer id;
     private final String firstName;
     private final String lastName;
-    private final Date birthday;
+    private final Long birthday;
     private final String phoneNumber;
     private final String email;
     private final Integer organization;
@@ -40,7 +37,7 @@ public class User implements Entity {
         return lastName;
     }
 
-    public Date getBirthday() {
+    public Long getBirthday() {
         return birthday;
     }
 
@@ -68,12 +65,14 @@ public class User implements Entity {
         return password;
     }
 
+
+
     public static class Builder {
 
         private Integer id;
         private String firstName;
         private String lastName;
-        private Date birthday;
+        private Long birthday;
         private String phoneNumber;
         private String email;
         private Integer organization;
@@ -104,7 +103,7 @@ public class User implements Entity {
             return this;
         }
 
-        public Builder setBirthday(Date birthday) {
+        public Builder setBirthday(Long birthday) {
             this.birthday = birthday;
             return this;
         }
@@ -126,6 +125,16 @@ public class User implements Entity {
 
         public Builder setAccessLevel(Integer accessLevel) {
             this.accessLevel = accessLevel;
+            return this;
+        }
+
+        public Builder setLogin(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
             return this;
         }
 

@@ -24,7 +24,10 @@ public class ClientController implements EventListener, SocketThreadListener {
     private ClientView client;
     private SocketThread socketThread;
     private RequestFabric requestFabric;
-    private int selector = 0;
+
+//  Антипаттерн "Магическое число"
+//    private int selector = 0;
+    private int connectSelector;
 
     public ClientController(ClientView client) {
         this.client = client;
@@ -34,11 +37,13 @@ public class ClientController implements EventListener, SocketThreadListener {
     public void execute (EventType event){
         switch (event){
             case LOGIN:
-                selector = 1;
+//                selector = 1;
+                connectSelector = NetworkConstants.AUTH_CONNECT;
                 connect();
                 break;
             case REGISTRATION:
-                selector = 2;
+//                selector = 2;
+                connectSelector = NetworkConstants.REG_CONNECT;
                 connect();
                 break;
             case DISCONNECT:
@@ -99,7 +104,7 @@ public class ClientController implements EventListener, SocketThreadListener {
     @Override
     public void onSocketIsReady(SocketThread thread, Socket socket) {
         client.logAppend("Соединение установлено");
-        if (selector == 1) {
+        if (connectSelector == NetworkConstants.AUTH_CONNECT) {
             User authUser = new User.Builder(client.getLogin(), client.getPassword()).build();
             Request authRequest = requestFabric.makeRequest(RequestSubjects.AUTH_REQUEST, authUser);
             thread.sendRequest(authRequest);

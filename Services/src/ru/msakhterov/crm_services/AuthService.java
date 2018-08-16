@@ -24,6 +24,8 @@ public class AuthService {
     public boolean executeRequest() {
         User authUser = (User) request.getEntity();
         User user = dataBaseManager.getUser(authUser.getLogin());
+        System.out.println("Auth user pass: " + authUser.getPassword());
+        System.out.println("User pass: " + user.getPassword());
         if (authUser.getPassword().equals(user.getPassword())) {
             Request request = requestFabric.makeRequest(RequestSubjects.AUTH_ACCEPT, user);
             client.sendRequest(request);
